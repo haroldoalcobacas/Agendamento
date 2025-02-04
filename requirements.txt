@@ -1,0 +1,8 @@
+asgiref==3.8.1
+Django==5.1.5
+django-cpf-cnpj==1.0.0
+django-extensions==3.1.5
+django-widget-tweaks==1.4.9
+setuptools==75.8.0
+sqlparse==0.5.3
+tzdata==2025.1

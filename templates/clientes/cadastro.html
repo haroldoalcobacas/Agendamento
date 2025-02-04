@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}
+    Agendar Consulta | {{ block.super }}
+{% endblock %}
+
+{% block container %}
+<div class="row">
+    <div class="col-md-8 col-md-offset-2">
+        <div class="page-header">
+            <h1>Agendar Consulta</h1>
+        </div>
+        <form class="form-horizontal" method="post">
+            {% csrf_token %}
+            {% for error in form.non_field_errors %}
+            <div class="alert alert-danger">
+                {{ error }}
+            </div>
+            {% endfor %}
+            <fieldset>
+                <!-- Campo de Filtro de Especialidade -->
+                <div class="form-group">
+                    <label for="especialidade" class="col-md-3 control-label">Filtrar por Especialidade</label>
+                    <div class="col-md-9">
+                        <select id="especialidade" class="form-control" data-url="{% url 'clientes:get_agendas' %}">
+                            <option value="">Selecione uma especialidade</option>
+                            {% for especialidade in especialidades %}
+                                <option value="{{ especialidade.nome }}">{{ especialidade.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Campo de Agenda (será atualizado dinamicamente) -->
+                <div class="form-group">
+                    <label for="id_agenda" class="col-md-3 control-label">Agenda</label>
+                    <div class="col-md-9">
+                        <select id="id_agenda" name="agenda" class="form-control">
+                            <option value="">Selecione uma agenda</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Botão de Salvar -->
+                <div class="form-group">
+                  <div class="col-md-9 col-md-offset-3">
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                  </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
+
+<!-- Adicionando jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#especialidade').change(function() {
+            var especialidadeNome = $(this).val();
+            var url = $(this).data('url'); // Obtém a URL do atributo data-url
+
+            var agendaSelect = $('#id_agenda');
+            agendaSelect.empty().append('<option>Carregando...</option>');
+
+            if (!especialidadeNome) {
+                agendaSelect.html('<option value="">Selecione uma agenda</option>');
+                return;
+            }
+
+            $.ajax({
+                url: url,
+                data: { 'especialidade_nome': especialidadeNome },
+                success: function(data) {
+                    agendaSelect.empty().append('<option value="">Selecione uma agenda</option>');
+                    
+                    if (data.length === 0) {
+                        agendaSelect.append('<option value="">Nenhuma agenda disponível</option>');
+                    } else {
+                        data.forEach(function(agenda) {
+                            agendaSelect.append('<option value="' + agenda.id + '">' + agenda.nome + '</option>');
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Erro ao carregar agendas:", error);
+                    agendaSelect.html('<option value="">Erro ao carregar</option>');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

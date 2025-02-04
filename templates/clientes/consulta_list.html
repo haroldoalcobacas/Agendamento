@@ -1,0 +1,64 @@
+{% extends "accounts/index.html" %}
+
+{% block title %}
+    Minhas Consultas
+{% endblock %}
+
+{% block accounts_container %}
+<h2>Minhas Consultas</h2>
+
+<!-- Campo de Filtro de Especialidade -->
+<form method="get" action="">
+    <div class="form-group">
+        <label for="especialidade">Filtrar por Especialidade:</label>
+        <select name="especialidade" id="especialidade" class="form-control">
+            <option value="">Todas as Especialidades</option>
+            {% for especialidade in especialidades %}
+                <option value="{{ especialidade.id }}" {% if especialidade.id|stringformat:"s" == especialidade_filtrada %}selected{% endif %}>
+                    {{ especialidade.nome }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Filtrar</button>
+</form>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Médico</th>
+            <th>Especialidade</th>
+            <th>Dia</th>
+            <th>Horário</th>
+            <th>Opções</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for consulta in object_list %}
+            <tr>
+                <td># {{ consulta.pk }}</td>
+                <td>{{ consulta.cliente.user.get_full_name }}</td>
+                <td>{{ consulta.agenda.medico.nome }}</td>
+                <td>{{ consulta.agenda.medico.especialidade.nome }}</td>
+                <td>{{ consulta.agenda.dia|date:"d/m/Y" }}</td>
+                <td>{{ consulta.agenda.get_horario_display }}</td>
+
+                <td>
+                    <a href="{% url 'clientes:consulta_delete' consulta.pk %}" class="btn btn-danger btn-sm">
+                        <i class="fas fa-trash-alt"></i> 
+                    </a>
+                </td>
+
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="7" class="text-center">Nenhuma consulta encontrada.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
+

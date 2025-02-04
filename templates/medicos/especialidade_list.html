@@ -1,0 +1,41 @@
+{% extends "accounts/index.html" %}
+
+{% block title %}
+   Especialidade
+{% endblock %}
+
+{% block accounts_container %}
+<h2>Especialidade</h2>
+<table class="table table-bordered">
+    <li>
+        <a href="{% url 'medicos:especialidade_cadastro' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i>  Adicionar
+        </a>
+    </li>
+    <thead>
+        <tr>
+            <th>
+                ID
+            </th>
+            <th>
+                Nome
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for especialidade in object_list %}
+        <tr>
+            <td>
+                <a href=""> {{ especialidade.pk }}</a>
+            </td>
+            <td>
+                {{ especialidade.nome }}
+            </td>
+        </tr>
+        {% endfor %}
+        
+        
+    </tbody>
+    
+</table>
+{% endblock %}
